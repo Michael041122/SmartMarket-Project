@@ -5,14 +5,15 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d
     networks:
       - smartmarket-net
 
   eureka-server:
     build: ./SmartMarket
     environment:
-      - JAVA_OPTS=-Xmx256m
+      - JAVA_OPTS=-Xmx128m -Xms64m
     networks:
       - smartmarket-net
 
@@ -22,7 +23,7 @@ services:
       - eureka-server
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - JAVA_OPTS=-Xmx256m
+      - JAVA_OPTS=-Xmx128m -Xms64m
     networks:
       - smartmarket-net
 
@@ -36,7 +37,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/MAXproduct_service?createDatabaseIfNotExist=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
-      - JAVA_OPTS=-Xmx256m
+      - JAVA_OPTS=-Xmx192m -Xms64m
     networks:
       - smartmarket-net
 
@@ -50,7 +51,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/MAXclient_service?createDatabaseIfNotExist=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
-      - JAVA_OPTS=-Xmx256m
+      - JAVA_OPTS=-Xmx192m -Xms64m
     networks:
       - smartmarket-net
 
