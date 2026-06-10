@@ -1,0 +1,63 @@
+﻿version: '3.8'
+
+services:
+  eureka-server:
+    build: ./SmartMarket
+    ports:
+      - "8761:8761"
+    networks:
+      - smartmarket-net
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - smartmarket-net
+
+  product-service:
+    build: ./product-service
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/MAXproduct_service?createDatabaseIfNotExist=true
+    networks:
+      - smartmarket-net
+
+  order-service:
+    build: ./order-service/order-service
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/MAXorder_service?createDatabaseIfNotExist=true
+    networks:
+      - smartmarket-net
+
+  client-service:
+    build: ./client-service
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/MAXclient_service?createDatabaseIfNotExist=true
+    networks:
+      - smartmarket-net
+
+  vue-front:
+    build: ./vue-front
+    ports:
+      - "80:5173"
+    depends_on:
+      - api-gateway
+    networks:
+      - smartmarket-net
+
+networks:
+  smartmarket-net:
+    driver: bridge

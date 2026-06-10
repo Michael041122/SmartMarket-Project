@@ -1,0 +1,9 @@
+com\rene\pedidos\dto\ProductoResponse.class
+com\rene\pedidos\controller\GlobalExceptionHandler.class
+com\rene\pedidos\service\impl\PedidoServiceImpl.class
+com\rene\pedidos\SistemaPedidosApplication.class
+com\rene\pedidos\config\RestTemplateConfig.class
+com\rene\pedidos\controller\PedidoController.class
+com\rene\pedidos\service\PedidoService.class
+com\rene\pedidos\repository\PedidoRepository.class
+com\rene\pedidos\entity\Pedido.class
