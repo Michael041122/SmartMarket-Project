@@ -1,12 +1,22 @@
 ﻿version: '3.8'
 
 services:
+  db-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    networks:
+      - smartmarket-net
+
   eureka-server:
     build: ./SmartMarket
     ports:
-      - "${PORT:-8761}:8761"
+      - "8761:8761"
     environment:
-      - JAVA_OPTS=-Xmx256m -Xms128m
+      - JAVA_OPTS=-Xmx256m
     networks:
       - smartmarket-net
 
@@ -18,7 +28,7 @@ services:
       - eureka-server
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - JAVA_OPTS=-Xmx256m -Xms128m
+      - JAVA_OPTS=-Xmx256m
     networks:
       - smartmarket-net
 
@@ -26,30 +36,17 @@ services:
     build: ./product-service
     depends_on:
       - eureka-server
+      - db-mysql
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - JAVA_OPTS=-Xmx256m -Xms128m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/MAXproduct_service?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - JAVA_OPTS=-Xmx256m
     networks:
       - smartmarket-net
 
-  client-service:
-    build: ./client-service
-    depends_on:
-      - eureka-server
-    environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - JAVA_OPTS=-Xmx256m -Xms128m
-    networks:
-      - smartmarket-net
-
-  vue-front:
-    build: ./vue-front
-    ports:
-      - "80:80"
-    depends_on:
-      - api-gateway
-    networks:
-      - smartmarket-net
+  # Aplicar similar para los otros servicios...
 
 networks:
   smartmarket-net:
